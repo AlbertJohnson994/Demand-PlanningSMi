@@ -1,0 +1,34 @@
+@startuml Demand Planning System - Production Analytics Sequence
+
+actor User as user
+participant "Production Page\n(React)" as production
+participant "Backend API\n(NestJS)" as backend
+participant "Database\n(SQLite)" as database
+
+user -> production: Navigate to /production
+
+production -> backend: GET /api/demands
+backend -> database: SELECT * FROM demands\nORDER BY createdAt DESC
+database -> backend: Return all demands
+
+production -> backend: GET /api/demands/statistics
+backend -> database: SELECT * FROM demands
+database -> backend: Return all demands
+backend -> backend: Calculate statistics\n(total, planning, inProgress, completed,\ntotalPlanned, totalProduced)
+backend -> production: Return statistics
+
+production -> production: Process data for charts
+note right of production
+  - Group by month
+  - Calculate completion rates
+  - Compute growth percentages
+  - Filter by time range
+end note
+
+production -> user: Render analytics dashboard
+
+user -> production: Change time range filter
+production -> production: Filter and recalculate data
+production -> user: Update charts with new data
+
+@enduml

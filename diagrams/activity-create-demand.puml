@@ -1,0 +1,42 @@
+@startuml Demand Planning System - Create Demand Activity
+
+start
+
+:User clicks "New Demand" button;
+:System displays demand form;
+
+repeat
+  :User fills form fields;
+  :System validates input;
+  
+  if (Validation successful?) then (yes)
+    :Proceed to submission;
+  else (no)
+    :Show error messages;
+  endif
+  
+repeat while (Validation fails?) is (yes)
+->yes;
+
+:User submits form;
+:Frontend sends POST /api/demands;
+:Backend validates business rules;
+
+if (SKU already exists?) then (yes)
+  :Return error: SKU exists;
+  stop
+else (no)
+  if (Dates invalid?) then (yes)
+    :Return error: Invalid dates;
+    stop
+  else (no)
+    :Create demand record;
+    :Save to database;
+    :Return success response;
+    :Frontend updates UI;
+    :Show success message;
+    stop
+  endif
+endif
+
+@enduml

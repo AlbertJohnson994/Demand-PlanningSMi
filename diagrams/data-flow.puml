@@ -1,0 +1,49 @@
+@startuml Demand Planning System - Data Flow
+
+actor User as user
+component "UI Components" as ui
+component "API Client" as api
+component "Backend Service" as backend
+database "SQLite" as db
+
+' Data creation flow
+user -> ui : Input demand data
+ui -> api : Format and validate
+api -> backend : POST /api/demands
+backend -> backend : Business validation
+backend -> db : INSERT demand
+db -> backend : Return created demand
+backend -> api : 201 Response
+api -> ui : Update state
+ui -> user : Show confirmation
+
+' Data reading flow
+user -> ui : Request demands
+ui -> api : GET /api/demands
+api -> backend : Request demands
+backend -> db : SELECT demands
+db -> backend : Return demands
+backend -> api : JSON response
+api -> ui : Set state
+ui -> user : Render table
+
+' Analytics flow
+user -> ui : View analytics
+ui -> api : GET /api/demands/statistics
+api -> backend : Request statistics
+backend -> db : Aggregate data
+db -> backend : Return raw data
+backend -> backend : Calculate metrics
+backend -> api : Statistics JSON
+api -> ui : Process for charts
+ui -> user : Display charts
+
+note right of backend
+  Data processing includes:
+  - Completion rates
+  - Growth calculations
+  - Monthly aggregations
+  - Status distributions
+end note
+
+@enduml

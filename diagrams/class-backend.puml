@@ -1,0 +1,86 @@
+@startuml Demand Planning System - Backend Classes
+
+class DemandController {
+  - demandService: DemandService
+  + findAll(): Promise<Demand[]>
+  + findOne(id: number): Promise<Demand>
+  + create(dto: CreateDemandDto): Promise<Demand>
+  + update(id: number, dto: UpdateDemandDto): Promise<Demand>
+  + remove(id: number): Promise<void>
+  + getStatistics(): Promise<Statistics>
+}
+
+class DemandService {
+  - demandRepository: Repository<Demand>
+  + findAll(): Promise<Demand[]>
+  + findOne(id: number): Promise<Demand>
+  + create(createDemandDto: CreateDemandDto): Promise<Demand>
+  + update(id: number, updateDemandDto: UpdateDemandDto): Promise<Demand>
+  + remove(id: number): Promise<void>
+  + getStatistics(): Promise<Statistics>
+  - validateDates(startDate: Date, endDate: Date): void
+  - validateStatusTransition(current: DemandStatus, new: DemandStatus): boolean
+  - seedSampleData(): Promise<void>
+}
+
+class Demand {
+  - id: number
+  - sku: string
+  - description: string
+  - startDate: Date
+  - endDate: Date
+  - totalPlanned: number
+  - totalProduction: number
+  - status: DemandStatus
+  - createdAt: Date
+  - updatedAt: Date
+}
+
+enum DemandStatus {
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+}
+
+class CreateDemandDto {
+  + sku: string
+  + description: string
+  + startDate: Date
+  + endDate: Date
+  + totalPlanned: number
+  + totalProduction?: number
+  + status?: DemandStatus
+}
+
+class UpdateDemandDto {
+  + sku?: string
+  + description?: string
+  + startDate?: Date
+  + endDate?: Date
+  + totalPlanned?: number
+  + totalProduction?: number
+  + status?: DemandStatus
+}
+
+class AppModule {
+  + imports: TypeOrmModule[], ...
+  + controllers: DemandController
+  + providers: DemandService
+}
+
+' Relationships
+DemandController --> DemandService : injects
+DemandService --> Demand : manages
+DemandService --> CreateDemandDto : uses
+DemandService --> UpdateDemandDto : uses
+Demand --> DemandStatus : has
+CreateDemandDto --> DemandStatus : optional
+UpdateDemandDto --> DemandStatus : optional
+
+note top of DemandService
+  Contains business logic,
+  validation, and data
+  processing methods
+end note
+
+@enduml

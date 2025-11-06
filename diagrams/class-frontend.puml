@@ -1,0 +1,92 @@
+@startuml Demand Planning System - Frontend Classes
+
+class DemandForm {
+  - onSubmit: (data: DemandFormData) => void
+  - initialData?: Partial<DemandFormData>
+  - isEditing: boolean
+  - onCancel?: () => void
+  + render(): JSX.Element
+  - handleFormSubmit(data: DemandFormData): void
+}
+
+class DemandTable {
+  - demands: Demand[]
+  - onEdit: (demand: Demand) => void
+  - onDelete: (id: number) => void
+  + render(): JSX.Element
+  - formatDate(dateString: string): string
+  - formatNumber(value: number): string
+  - getStatusColor(status: string): string
+  - getCompletionRate(planned: number, produced: number): number
+}
+
+class Demand {
+  + id: number
+  + sku: string
+  + description: string
+  + startDate: string
+  + endDate: string
+  + totalPlanned: number
+  + totalProduction: number
+  + status: 'Planning' | 'In Progress' | 'Completed'
+}
+
+class DemandFormData {
+  + sku: string
+  + description: string
+  + startDate: string
+  + endDate: string
+  + totalPlanned: number
+  + totalProduction?: number
+  + status: 'Planning' | 'In Progress' | 'Completed'
+}
+
+class ProductionPage {
+  - demands: Demand[]
+  - productionData: ProductionData[]
+  - summary: AnalyticsSummary
+  - timeRange: '3m' | '6m' | '1y'
+  + render(): JSX.Element
+  - fetchProductionData(): void
+  - processProductionData(demands: Demand[], stats: any): void
+  - calculateGrowthRate(demands: Demand[]): number
+  - processMonthlyData(demands: Demand[]): ProductionData[]
+}
+
+class ProductionData {
+  + month: string
+  + production: number
+  + planned: number
+  + completionRate: number
+  + growth: number
+}
+
+class AnalyticsSummary {
+  + totalProduction: number
+  + totalPlanned: number
+  + averageCompletion: number
+  + growthRate: number
+  + activeDemands: number
+  + completedThisMonth: number
+}
+
+' Relationships
+DemandForm --> DemandFormData : uses
+DemandTable --> Demand : displays
+ProductionPage --> Demand : processes
+ProductionPage --> ProductionData : generates
+ProductionPage --> AnalyticsSummary : displays
+
+note top of DemandForm
+  Handles form validation
+  using react-hook-form
+  and Zod schemas
+end note
+
+note right of ProductionPage
+  Uses Recharts for
+  data visualization
+  and real-time analytics
+end note
+
+@enduml

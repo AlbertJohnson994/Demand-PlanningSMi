@@ -1,0 +1,76 @@
+@startuml Demand Planning System - Component Architecture
+
+package "Frontend Components" {
+  component "Dashboard" as dashboard {
+    component "DemandTable" as demand_table
+    component "DemandForm" as demand_form
+    component "Header" as header
+  }
+
+  component "Production Analytics" as analytics {
+    component "Charts" as charts
+    component "Statistics" as stats
+    component "Filters" as filters
+  }
+
+  component "Documentation" as documentation {
+    component "DownloadButton" as download_btn
+    component "TechStack" as tech_stack
+  }
+
+  component "UI Components" as ui_components {
+    component "Button" as button
+    component "Input" as input
+    component "Card" as card
+    component "Table" as ui_table
+    component "Select" as select
+  }
+}
+
+package "Backend Services" {
+  component "DemandController" as controller {
+    component "CRUD Operations" as crud
+    component "Statistics" as backend_stats
+  }
+
+  component "DemandService" as demand_service {
+    component "Business Logic" as business
+    component "Validation" as validation
+    component "Data Processing" as processing
+  }
+
+  component "Database" as db {
+    component "Demand Entity" as demand_entity
+    component "SQLite" as sqlite
+  }
+}
+
+' Frontend connections
+dashboard --> demand_table : displays
+dashboard --> demand_form : creates/edits
+analytics --> charts : renders
+analytics --> stats : shows
+analytics --> filters : controls
+
+' Backend connections
+controller --> demand_service : uses
+demand_service --> db : persists
+demand_service --> business : contains
+demand_service --> validation : performs
+
+' Cross-boundary connections
+demand_table --> controller : fetches data
+demand_form --> controller : submits data
+analytics --> controller : requests stats
+
+note right of dashboard
+  Manages demand creation,
+  editing, and deletion
+end note
+
+note left of analytics
+  Displays production metrics,
+  charts, and growth analysis
+end note
+
+@enduml

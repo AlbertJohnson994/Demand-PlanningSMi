@@ -1,0 +1,34 @@
+@startuml Demand Planning System - Production Analytics Activity
+
+start
+
+:User navigates to Production page;
+:Frontend loads component;
+:Fetch demands from /api/demands;
+:Fetch statistics from /api/demands/statistics;
+
+partition "Data Processing" {
+  :Group data by month;
+  :Calculate production metrics;
+  :Compute completion rates;
+  :Calculate growth percentages;
+}
+
+partition "UI Rendering" {
+  :Render summary cards;
+  :Render production vs planned chart;
+  :Render completion rate trend;
+  :Render growth analysis chart;
+  :Display recent demands table;
+}
+
+:User interacts with time filters;
+note right
+  3m, 6m, 1y time ranges
+  update chart data
+end note
+
+:Update charts with filtered data;
+stop
+
+@enduml

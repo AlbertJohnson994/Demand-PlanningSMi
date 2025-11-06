@@ -1,0 +1,56 @@
+@startuml Demand Planning System - Deployment Architecture
+
+cloud "Internet" as internet {
+  node "Users" as users
+}
+
+cloud "Vercel Platform" as vercel {
+  component "Frontend App" as vercel_app {
+    [Next.js Application] as next_app
+    [Static Assets] as assets
+    [CDN] as cdn
+  }
+}
+
+cloud "Railway Platform" as railway {
+  component "Backend API" as railway_app {
+    [NestJS Application] as nest_app
+    [SQLite Database] as railway_db
+  }
+}
+
+package "Development" {
+  component "Local Development" as local {
+    [Docker Compose] as docker_compose
+    [Frontend Container] as local_frontend
+    [Backend Container] as local_backend
+    [SQLite DB] as local_db
+  }
+}
+
+' Connections
+users --> vercel : HTTPS
+vercel --> railway : REST API
+local_frontend --> local_backend : http://backend:3001
+local_backend --> local_db : TypeORM
+
+note right of vercel
+  Domain: https://demand-planning.vercel.app
+  Global CDN for fast delivery
+  Automatic deployments from Git
+end note
+
+note left of railway
+  Domain: https://demand-planning-api.railway.app
+  Scalable backend infrastructure
+  Persistent storage
+end note
+
+note bottom of local
+  Development environment
+  docker-compose up --build
+  http://localhost:3000 (frontend)
+  http://localhost:3001 (backend)
+end note
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml Demand Planning System - Create Demand Sequence
+
+actor User as user
+participant "Frontend\n(React)" as frontend
+participant "Backend API\n(NestJS)" as backend
+participant "Database\n(SQLite)" as database
+
+user -> frontend: Fill demand form
+user -> frontend: Click "Create Demand"
+
+frontend -> frontend: Validate form data
+frontend -> frontend: Format dates and numbers
+
+frontend -> backend: POST /api/demands\n{sku, description, dates, totals, status}
+
+backend -> backend: Validate DTO with class-validator
+backend -> database: SELECT * FROM demands WHERE sku = ?
+
+alt SKU exists
+  database -> backend: Return existing demand
+  backend -> frontend: 400 Bad Request\n"SKU already exists"
+  frontend -> user: Show error message
+else SKU available
+  database -> backend: Return empty result
+  backend -> backend: Validate date constraints
+  backend -> backend: Set default values
+  backend -> database: INSERT INTO demands VALUES (...)
+  database -> backend: Success
+  backend -> frontend: 201 Created\n{id, sku, status, ...}
+  frontend -> frontend: Update demands list
+  frontend -> user: Show success message
+end
+
+@enduml

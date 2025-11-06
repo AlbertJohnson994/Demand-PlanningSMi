@@ -1,0 +1,54 @@
+@startuml Demand Planning System - Project Structure
+
+package "Demand Planning System" {
+  package "Frontend" {
+    [Next.js 14 App] as frontend
+    folder "src/app" {
+      [Dashboard Page] as dashboard
+      [Production Analytics] as production
+      [Documentation] as docs
+    }
+    folder "src/components" {
+      [DemandForm] as form
+      [DemandTable] as table
+      [Header] as header
+      [Footer] as footer
+      folder "ui" {
+        [Button, Input, Card, Table] as shadcn
+      }
+    }
+    folder "src/lib" {
+      [utils.ts] as utils
+    }
+  }
+
+  package "Backend" {
+    [NestJS API] as backend
+    folder "src/controllers" {
+      [DemandController] as controller
+    }
+    folder "src/services" {
+      [DemandService] as service
+    }
+    folder "src/entities" {
+      [Demand Entity] as entity
+    }
+    folder "src/dtos" {
+      [CreateDemandDto\nUpdateDemandDto] as dtos
+    }
+  }
+
+  package "Infrastructure" {
+    [Docker] as docker
+    [Docker Compose] as compose
+    [SQLite Database] as database
+  }
+}
+
+frontend --> backend : REST API
+backend --> database : TypeORM
+docker --> frontend : Container
+docker --> backend : Container
+compose --> docker : Orchestration
+
+@enduml
