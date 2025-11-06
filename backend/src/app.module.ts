@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Demand } from 'src/entities/demand.entity';
-import { DemandController } from 'src/controllers/demand.controller';
-import { DemandService } from 'src/services/demand.service';
+import { Demand } from './entities/demand.entity';
+import { DemandController } from './controllers/demand.controller';
+import { DemandService } from './services/demand.service';
 
 @Module({
   imports: [
@@ -10,8 +10,8 @@ import { DemandService } from 'src/services/demand.service';
       type: 'sqlite',
       database: 'database.sqlite',
       entities: [Demand],
-      synchronize: true,
-      logging: true,
+      synchronize: true, // Only for development - use migrations in production
+      logging: process.env.NODE_ENV !== 'production',
     }),
     TypeOrmModule.forFeature([Demand]),
   ],

@@ -34,6 +34,12 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log(`Backend API running on http://localhost:${port}/api`);
+
+  console.log(`🚀 Server running on port ${port}`);
+  console.log(`📊 API available at http://localhost:${port}/api`);
+  console.log(`📈 Demands API: http://localhost:${port}/api/demands`);
+  console.log(`📊 Statistics: http://localhost:${port}/api/demands/statistics`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
 }
+
 bootstrap();

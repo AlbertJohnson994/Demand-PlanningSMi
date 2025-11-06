@@ -20,7 +20,7 @@ export class Demand {
   @Column({ unique: true })
   sku!: string;
 
-  @Column('text', { default: '' }) // Make optional with default
+  @Column('text', { default: '' })
   description!: string;
 
   @Column('date')

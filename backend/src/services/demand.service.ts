@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,11 +10,54 @@ import { Demand, DemandStatus } from '../entities/demand.entity';
 import { CreateDemandDto, UpdateDemandDto } from '../dtos/create-demand.dto';
 
 @Injectable()
-export class DemandService {
+export class DemandService implements OnModuleInit {
   constructor(
     @InjectRepository(Demand)
     private readonly demandRepository: Repository<Demand>,
   ) {}
+
+  async onModuleInit() {
+    await this.seedSampleData();
+  }
+
+  private async seedSampleData(): Promise<void> {
+    const count = await this.demandRepository.count();
+
+    if (count === 0) {
+      const sampleData = [
+        {
+          sku: 'SKU001',
+          description: 'Sample product 1',
+          startDate: new Date('2024-01-01'),
+          endDate: new Date('2024-01-31'),
+          totalPlanned: 100.5,
+          totalProduction: 95.2,
+          status: DemandStatus.COMPLETED,
+        },
+        {
+          sku: 'SKU002',
+          description: 'Sample product 2',
+          startDate: new Date('2024-02-01'),
+          endDate: new Date('2024-02-28'),
+          totalPlanned: 250.75,
+          totalProduction: 180.3,
+          status: DemandStatus.IN_PROGRESS,
+        },
+        {
+          sku: 'SKU003',
+          description: 'Sample product 3',
+          startDate: new Date('2024-03-01'),
+          endDate: new Date('2024-03-31'),
+          totalPlanned: 75.25,
+          totalProduction: 0,
+          status: DemandStatus.PLANNING,
+        },
+      ];
+
+      await this.demandRepository.save(sampleData);
+      console.log('✅ Sample data seeded successfully');
+    }
+  }
 
   async findAll(): Promise<Demand[]> {
     return this.demandRepository.find({
